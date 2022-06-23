@@ -4,7 +4,5 @@ For this challenge, my goal was to create a content management system that allow
 
 ## Visuals 
  ![Walkthrough]()
- ![]()
   ## Resources 
- * [Live Site](https://untjala.github.io/note-taker/)
- * [Repository](https://untjala.github.io/employee-tracker/)
+ * [Repository](https://github.com/untjala/employee-tracker)
