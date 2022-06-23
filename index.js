@@ -1,9 +1,21 @@
 //Required Dependencies
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
-// GIVEN a command-line application that accepts user input
-// WHEN I start the application
-// THEN I am presented with the following options: view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
+const tables = require('console.table')
+//SQL database connection 
+const db = mysql.createConnection(
+  {
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'employee_db'
+  },
+);
+
+db.connect(function (err,) {
+  if(err) throw (err);
+  startPrompts();
+});
 //Start of inquirer prompts
 const startPrompts = () => {
     console.log('Welcome! Let\'s get started!')
@@ -39,12 +51,34 @@ const startPrompts = () => {
         if (answer.startPrompts === 'Update employee role') 
         {return updateRole();}
         if (answer.startPrompts === 'Quit') 
-        {return quit();}
+        {return db.end();}
     })
 }
-startPrompts();
 // WHEN I choose to view all departments
 // THEN I am presented with a formatted table showing department names and department ids
+// const viewDepartments = () => {
+    
+// }
+// const viewRoles = () => {
+
+// }
+// const viewEmployees = () => {
+
+// }
+// const addDepartment = () => {
+
+// }
+// const addRole = () => {
+
+// }
+// const addEmployee = () => {
+
+// }
+// const updateRole = () => {
+
+// }
+
+// startPrompts();
 // WHEN I choose to view all roles
 // THEN I am presented with the job title, role id, the department that role belongs to, and the salary for that role
 // WHEN I choose to view all employees
