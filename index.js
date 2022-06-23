@@ -22,7 +22,27 @@ const startPrompts = () => {
             'Quit'
         ]
     })
+    //Returns prompts based on user response 
+    .then(answer => {
+        if (answer.startPrompts === 'View all departments') 
+        { return viewDepartments(); }
+        if (answer.startPrompts === 'View all roles') 
+        { return viewRoles(); }
+        if (answer.startPrompts === 'View all employees') 
+        { return viewEmployees(); }
+        if (answer.startPrompts === 'Add a department') 
+        {return addDepartment();}
+        if (answer.startPrompts === 'Add a role') 
+        {return addRole();}
+        if (answer.startPrompts === 'Add an employee') 
+        {return addEmployee();}
+        if (answer.startPrompts === 'Update employee role') 
+        {return updateRole();}
+        if (answer.startPrompts === 'Quit') 
+        {return quit();}
+    })
 }
+startPrompts();
 // WHEN I choose to view all departments
 // THEN I am presented with a formatted table showing department names and department ids
 // WHEN I choose to view all roles
