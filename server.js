@@ -1,7 +1,7 @@
 //Required Dependencies
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
-const tables = require('console.table')
+require('console.table')
 //SQL database connection 
 const db = mysql.createConnection(
   {
@@ -12,17 +12,13 @@ const db = mysql.createConnection(
   },
 );
 
-db.connect(function (err,) {
-  if(err) throw (err);
-  startPrompts();
-});
 //Start of inquirer prompts
 const startPrompts = () => {
     console.log('Welcome! Let\'s get started!')
     inquirer.prompt({
-        type: 'list',
+        type: 'rawlist',
         name: 'startOptions',
-        message: 'What would you like to do?',
+        message: 'Welcome! What would you like to do?',
         choices: [
             'View all departments',
             'View all roles',
@@ -54,17 +50,37 @@ const startPrompts = () => {
         {return db.end();}
     })
 }
+// WHEN I choose to view all employees
+// THEN I am presented with a formatted table showing employee data, including employee ids, first names, last names, job titles, departments, salaries, and managers that the employees report to
+const viewEmployees = () => {
+  db.query('SELECT * FROM employee',
+  function (err, results) {
+    if (err) return console.error(err);
+    console.table(results);
+    return startPrompts;
+  });
+}
+// WHEN I choose to view all roles
+// THEN I am presented with the job title, role id, the department that role belongs to, and the salary for that role
+const viewRoles = () => {
+  db.query('SELECT * FROM role',
+    function (err, results) {
+      if (err) return console.error(err);
+      console.table(results);
+      return startPrompts;
+    });
+}
 // WHEN I choose to view all departments
 // THEN I am presented with a formatted table showing department names and department ids
-// const viewDepartments = () => {
-    
-// }
-// const viewRoles = () => {
+const viewDepartments = () => {
+  db.query('SELECT * FROM department',
+    function (err, results) {
+      if (err) return console.error(err);
+      console.table(results);
+      return startPrompts;
+    });
+}
 
-// }
-// const viewEmployees = () => {
-
-// }
 // const addDepartment = () => {
 
 // }
@@ -77,12 +93,7 @@ const startPrompts = () => {
 // const updateRole = () => {
 
 // }
-
-// startPrompts();
-// WHEN I choose to view all roles
-// THEN I am presented with the job title, role id, the department that role belongs to, and the salary for that role
-// WHEN I choose to view all employees
-// THEN I am presented with a formatted table showing employee data, including employee ids, first names, last names, job titles, departments, salaries, and managers that the employees report to
+startPrompts();
 // WHEN I choose to add a department
 // THEN I am prompted to enter the name of the department and that department is added to the database
 // WHEN I choose to add a role

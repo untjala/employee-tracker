@@ -2,7 +2,7 @@
   "name": "employee-tracker",
   "version": "1.0.0",
   "description": "For this challenge, my goal was to create a content management system that allows non-developer users to interact with databases. The user will go through a series of command line prompts to build their departments, and recieve a neatly formatted database with all their employee and department information. This is done through a command line application built with Node.js, Inquirer, and MySQL.",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
