@@ -11,12 +11,6 @@ const db = mysql.createConnection(
     database: 'employee_db',
   },
 );
-
-// db.connect(function (err) {
-//   if (err) throw err;
-//   starterPrompt();
-// });
-
 //Start of inquirer prompts
 const startPrompts = () => {
   inquirer.prompt({
@@ -36,14 +30,14 @@ const startPrompts = () => {
   })
     //Returns prompts based on user response 
     .then(answer => {
-      if (answer.startOptions === 'View all employees') {viewEmployees(); }
-      if (answer.startOptions === 'View all roles') {viewRoles(); }
-      if (answer.startOptions === 'View all departments') {viewDepartments(); }
-      if (answer.startOptions === 'Add a department') {addDepartment(); }
-      if (answer.startOptions === 'Add a role') {addRole(); }
-      if (answer.startOptions === 'Add an employee') {addEmployee(); }
-      if (answer.startOptions === 'Update employee role') {updateRole(); }
-      if (answer.startOptions === 'Quit') {db.end(); }
+      if (answer.startOptions === 'View all employees') { viewEmployees(); }
+      if (answer.startOptions === 'View all roles') { viewRoles(); }
+      if (answer.startOptions === 'View all departments') { viewDepartments(); }
+      if (answer.startOptions === 'Add a department') { addDepartment(); }
+      if (answer.startOptions === 'Add a role') { addRole(); }
+      if (answer.startOptions === 'Add an employee') { addEmployee(); }
+      if (answer.startOptions === 'Update employee role') { updateRole(); }
+      if (answer.startOptions === 'Quit') { db.end(); }
     })
 }
 // WHEN I choose to view all employees
@@ -63,7 +57,7 @@ const viewRoles = () => {
     function (err, results) {
       if (err) return console.error(err);
       console.table(results);
-    startPrompts();
+      startPrompts();
     });
 }
 // WHEN I choose to view all departments
@@ -73,65 +67,126 @@ const viewDepartments = () => {
     function (err, results) {
       if (err) return console.error(err);
       console.table(results);
-    startPrompts();
+      startPrompts();
     });
 }
 
-const addRole = () => {
-  console.log('Alright! Please enter the employee info:')
+const addEmployee = () => {
+  console.log('Add employee')
   const query =
-    `SELECT role.id, role.title, role.salary
-    FROM role`
-  db.query(query, function (err, results) {
-    if (err) throw err;
-    const addedRole = results.map(({ id, title, salary }) => ({
+    `SELECT r.id, r.title, r.salary
+      FROM r`
+  db.query(query, function (error, res) {
+    if (error) throw error;
+
+    const seletRole = res.map(({ id, title, salary }) => ({
       value: id, title: `${title}`, salary: `${salary}`
-    })
-    );
-    console.table(results);
-    secondaryPrompt(addedRole)
-  });
+    }));
+    console.table(res);
+    addEmpPropmt(seletRole);
+  })
 }
-const secondaryPrompt = (addedRole) => {
+const addEmpPropmt = (seletRole) => {
   inquirer.prompt([
     {
       type: 'input',
-      name: 'first_name',
+      name: 'newFirst',
       message: 'What is the employee\'s first name?'
     },
     {
       type: 'input',
-      name: 'last_name',
+      name: 'newLast',
       message: 'What is the employee\'s last name?'
     },
     {
-      type: 'rawlist',
-      name: 'role_id',
-      message: 'What is the employee\'s role?',
-      choices: addedRole
+      type: 'list',
+      name: 'newRole',
+      message: 'What is the employee\'s role ID?',
+      choices: seletRole
     },
   ])
-  .then(function (answer) {
-    console.table(answer);
+    .then(function (answer) {
+      console.table(answer);
+      const query =
+        `INSERT INTO employee SET ?`
+      db.query(query,
+        {
+          first_name: answer.newFirst,
+          last_name: answer.newLast,
+          role_id: answer.newRole
+        },
+        function (err, results) {
+          if (err) throw err;
+          console.table(results);
+          console.log('Added! All set!');
 
-    const query = `INSERT INTO employee SET ?`
-    db.query(query,
-      {
-        first_name: answer.first_name,
-        last_name: answer.last_name,
-        role_id: answer.role_id,
-      },
-      function (err, results) {
-        if (err) throw (err);
-        console.table(results);
-      startPrompts();
-      });
+          startPrompts();
+        });
     });
 }
-// const addRole = () => {
 
+const addRole = () => {
+  console.log('Okay! What role would you like to add?')
+  const query =
+  //Collabrated with a classmate to find query solution
+    `SELECT d.id, d.name, r.salary
+    FROM employee e
+    JOIN role r
+    ON e.role_id = r.id
+    JOIN department d 
+    ON d.id = r.department_id
+    GROUP BY d.id, d.name`
+  db.query(query, function (error, res) {
+    if (error) throw error;
+
+    const departmentChoice = res.map(({ id, name }) => ({
+      value: id, name: `${id}, ${name}`
+    }));
+    console.table(res)
+    addRolePrompt(departmentChoice);
+  });
+
+  const addRolePrompt = (departmentChoice) => {
+    inquirer.prompt([
+      {
+        type: 'input',
+        name: 'newTitle',
+        message: 'What is the title of the role?'
+      },
+      {
+        type: 'input',
+        name: 'newSalary',
+        message: 'What is the salary for this role?'
+      },
+      {
+        type: 'list',
+        name: 'departmentId',
+        message: 'What department does this role belong to?',
+        choices: departmentChoice
+      },
+    ])
+    .then(function (answer) {
+      console.table(answer);
+      const query =
+        `INSERT INTO role SET ?`
+      db.query(query,
+        {
+          title: answer.newTitle,
+          salary: answer.newSalary,
+          department_id: answer.departmentId
+        },
+        function (err, results) {
+          if (err) throw err;
+          console.table(results);
+          console.log('Added! All set!');
+
+          startPrompts();
+        });
+    });
+  }
+}
 //   }
-//   const addEmployee = () => {
+//   const updateEmployee = () => {
 
 //   }
 //   const updateRole = () => {
