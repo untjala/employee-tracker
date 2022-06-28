@@ -8,57 +8,53 @@ const db = mysql.createConnection(
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'employee_db'
+    database: 'employee_db',
   },
 );
 
+// db.connect(function (err) {
+//   if (err) throw err;
+//   starterPrompt();
+// });
+
 //Start of inquirer prompts
 const startPrompts = () => {
-    console.log('Welcome! Let\'s get started!')
-    inquirer.prompt({
-        type: 'rawlist',
-        name: 'startOptions',
-        message: 'Welcome! What would you like to do?',
-        choices: [
-            'View all departments',
-            'View all roles',
-            'View all employees',
-            'Add a department',
-            'Add a role',
-            'Add an employee',
-            'Update an employee role',
-            'Quit'
-        ]
-    })
+  inquirer.prompt({
+    type: 'list',
+    name: 'startOptions',
+    message: 'Welcome! What would you like to do?',
+    choices: [
+      'View all employees',
+      'View all roles',
+      'View all departments',
+      'Add a department',
+      'Add a role',
+      'Add an employee',
+      'Update an employee role',
+      'Quit',
+    ]
+  })
     //Returns prompts based on user response 
     .then(answer => {
-        if (answer.startPrompts === 'View all departments') 
-        { return viewDepartments(); }
-        if (answer.startPrompts === 'View all roles') 
-        { return viewRoles(); }
-        if (answer.startPrompts === 'View all employees') 
-        { return viewEmployees(); }
-        if (answer.startPrompts === 'Add a department') 
-        {return addDepartment();}
-        if (answer.startPrompts === 'Add a role') 
-        {return addRole();}
-        if (answer.startPrompts === 'Add an employee') 
-        {return addEmployee();}
-        if (answer.startPrompts === 'Update employee role') 
-        {return updateRole();}
-        if (answer.startPrompts === 'Quit') 
-        {return db.end();}
+      if (answer.startOptions === 'View all employees') {viewEmployees(); }
+      if (answer.startOptions === 'View all roles') {viewRoles(); }
+      if (answer.startOptions === 'View all departments') {viewDepartments(); }
+      if (answer.startOptions === 'Add a department') {addDepartment(); }
+      if (answer.startOptions === 'Add a role') {addRole(); }
+      if (answer.startOptions === 'Add an employee') {addEmployee(); }
+      if (answer.startOptions === 'Update employee role') {updateRole(); }
+      if (answer.startOptions === 'Quit') {db.end(); }
     })
 }
 // WHEN I choose to view all employees
 // THEN I am presented with a formatted table showing employee data, including employee ids, first names, last names, job titles, departments, salaries, and managers that the employees report to
 const viewEmployees = () => {
   db.query('SELECT * FROM employee',
-  function (err, results) {
-    if (err) return console.error(err);
-    console.table(results);
-    return startPrompts;
-  });
+    function (err, results) {
+      if (err) return console.error(err);
+      console.table(results);
+      startPrompts();
+    });
 }
 // WHEN I choose to view all roles
 // THEN I am presented with the job title, role id, the department that role belongs to, and the salary for that role
@@ -67,7 +63,7 @@ const viewRoles = () => {
     function (err, results) {
       if (err) return console.error(err);
       console.table(results);
-      return startPrompts;
+    startPrompts();
     });
 }
 // WHEN I choose to view all departments
@@ -77,22 +73,70 @@ const viewDepartments = () => {
     function (err, results) {
       if (err) return console.error(err);
       console.table(results);
-      return startPrompts;
+    startPrompts();
     });
 }
 
-// const addDepartment = () => {
+const addDepartment = () => {
+  console.log('Okay! What kind of employee would you like to add?')
+  const query =
+    `SELECT role.id, role.title, role.salary
+    FROM role`
+  db.query(query, function (err, results) {
+    if (err) throw err;
+    const addedRole = results.map(({ id, title, salary }) => ({
+      value: id, title: `${title}`, salary: `${salary}`
+    })
+    );
+    console.table(results);
+    secondaryPrompt(addedRole)
+  });
+}
+const secondaryPrompt = (addedRole) => {
+  inquirer.prompt([
+    {
+      type: input,
+      name: first_name,
+      message: 'What is the employee\'s first name?'
+    },
+    {
+      type: input,
+      name: last_name,
+      message: 'What is the employee\'s last name?'
+    },
+    {
+      type: rawlist,
+      name: role_id,
+      message: 'What is the employee\'s role?',
+      choices: addedRole
+    },
+  ])
+  .then(function (answer) {
+    console.table(answer);
 
-// }
+    const query = `INSERT INTO employee SET ?`
+    db.query(query,
+      {
+        first_name: answer.first_name,
+        last_name: answer.last_name,
+        role_id: answer.role_id,
+      },
+      function (err, results) {
+        if (err) throw (err);
+        console.table(results);
+      startPrompts();
+      });
+    });
+}
 // const addRole = () => {
 
-// }
-// const addEmployee = () => {
+//   }
+//   const addEmployee = () => {
 
-// }
-// const updateRole = () => {
+//   }
+//   const updateRole = () => {
 
-// }
+//   }
 startPrompts();
 // WHEN I choose to add a department
 // THEN I am prompted to enter the name of the department and that department is added to the database
