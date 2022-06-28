@@ -77,8 +77,8 @@ const viewDepartments = () => {
     });
 }
 
-const addDepartment = () => {
-  console.log('Okay! What kind of employee would you like to add?')
+const addRole = () => {
+  console.log('Alright! Please enter the employee info:')
   const query =
     `SELECT role.id, role.title, role.salary
     FROM role`
@@ -95,18 +95,18 @@ const addDepartment = () => {
 const secondaryPrompt = (addedRole) => {
   inquirer.prompt([
     {
-      type: input,
-      name: first_name,
+      type: 'input',
+      name: 'first_name',
       message: 'What is the employee\'s first name?'
     },
     {
-      type: input,
-      name: last_name,
+      type: 'input',
+      name: 'last_name',
       message: 'What is the employee\'s last name?'
     },
     {
-      type: rawlist,
-      name: role_id,
+      type: 'rawlist',
+      name: 'role_id',
       message: 'What is the employee\'s role?',
       choices: addedRole
     },
