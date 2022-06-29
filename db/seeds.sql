@@ -27,15 +27,3 @@ INSERT INTO department (name)
 VALUES ('Sales');
 INSERT INTO department (name)
 VALUES ('UI Development');
-
-/* Creates view all tables
-SELECT employee.id, employee.first_name, employee.last_name, role.title, department_name, role.salary, 
-CONCAT(manager.first_name, ' ', manager.last_name) AS manager
-FROM employee
-
-LEFT JOIN employee manager ON manager.id = employee.manager_id
-INNER JOIN role ON employee.role_id = role.id
-INNER JOIN department ON department.id = role.department_id;
-
-SELECT department_name from department;
-SELECT title FROM role; */

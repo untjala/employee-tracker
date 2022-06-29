@@ -75,6 +75,7 @@ const viewDepartments = () => {
 const addEmployee = () => {
   console.log('Add employee')
   const query =
+  //Collabrated with a classmate to find query solution
     `SELECT r.id, r.title, r.salary
       FROM r`
   db.query(query, function (error, res) {
@@ -129,14 +130,13 @@ const addEmpPropmt = (seletRole) => {
 const addRole = () => {
   console.log('Okay! What role would you like to add?')
   const query =
-    //Collabrated with a classmate to find query solution
     `SELECT d.id, d.name, r.salary
     FROM employee e
     JOIN role r
     ON e.role_id = r.id
     JOIN department d 
     ON d.id = r.department_id
-    GROUP BY d.id, d.name`
+    GROUP BY d.id, d.name, r.salary`
   db.query(query, function (error, res) {
     if (error) throw error;
 
@@ -230,7 +230,7 @@ const updateRole = () => {
 
   db.query(query, function (error, result) {
     if (error) throw error;
-    const updatedEmp = result.map(({ id, first_name, last_name }) => ({
+    const updatedEmp = result.map(({ id, first_name, last_name}) => ({
       value: id, name: `${first_name} ${last_name}`
     }));
     console.table(result)
@@ -267,12 +267,12 @@ const updatedEmpPrompt = (updatedEmp, selectRole) => {
     }
   ])
     .then(function (answer) {
-
+      console.log(answer);
       const query =
-        `UPDATE employee SET role_id ? WHERE id = ?`
+        `UPDATE employee SET role_id = ? WHERE id = ?`
         
       db.query(query,
-        [answer.roleID, answer.empId],
+        [answer.roleId, answer.empId],
         function (error, results) {
           if (error) throw error;
           console.table(results);
