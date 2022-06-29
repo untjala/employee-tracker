@@ -77,7 +77,7 @@ const addEmployee = () => {
   const query =
   //Collabrated with a classmate to find query solution
     `SELECT r.id, r.title, r.salary
-      FROM r`
+      FROM role r`
   db.query(query, function (error, res) {
     if (error) throw error;
 

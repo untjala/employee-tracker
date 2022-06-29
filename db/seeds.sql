@@ -13,11 +13,11 @@ VALUES ('Mary', 'Crawley', 1, NULL);
 INSERT INTO role (title, salary, department_id)
 VALUES ('Software Engineer', 110000, 1);
 INSERT INTO role (title, salary, department_id)
-VALUES ('UI Developer', 92000, 4);
+VALUES ('UI Developer', 92000, 2);
 INSERT INTO role (title, salary, department_id)
-VALUES ('Team Lead', 120000, 2);
+VALUES ('Team Lead', 120000, 3);
 INSERT INTO role (title, salary, department_id)
-VALUES ('Sales Lead', 140000, 3);
+VALUES ('Sales Lead', 140000, 4);
 
 INSERT INTO department (name)
 VALUES ('Product Engineering');
